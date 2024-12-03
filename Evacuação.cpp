@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <locale.h>
 #include <string.h>
+#include <dirent.h> // Necessário para listar arquivos no diretório
 
 int registro()
 {
@@ -49,8 +50,13 @@ int consulta()
     char cpf[40];
     char conteudo[200];
 
-    printf("Digite o CPF a ser consultado: ");
+    printf("Digite o CPF a ser consultado ou digite 'voltar' para retornar ao menu: ");
     scanf("%s", cpf);
+
+    if (strcmp(cpf, "voltar") == 0)
+    {
+        return 0; // Retorna ao menu
+    }
 
     strcat(cpf, ".txt"); // Adiciona extensão .txt
 
@@ -74,12 +80,42 @@ int consulta()
     return 0;
 }
 
+int visualizar_cpfs()
+{
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("."); // Abre o diretório atual
+    if (d)
+    {
+        printf("Lista de CPFs cadastrados:\n");
+        while ((dir = readdir(d)) != NULL)
+        {
+            if (strstr(dir->d_name, ".txt") != NULL) // Verifica se o arquivo é um .txt
+            {
+                printf("- %s\n", dir->d_name);
+            }
+        }
+        closedir(d);
+    }
+    else
+    {
+        printf("Erro ao acessar o diretório!\n");
+    }
+    system("pause");
+    return 0;
+}
+
 int deletar()
 {
     char cpf[40];
 
-    printf("Digite o CPF do registro a ser deletado: ");
+    printf("Digite o CPF do registro a ser deletado ou digite 'voltar' para retornar ao menu: ");
     scanf("%s", cpf);
+
+    if (strcmp(cpf, "voltar") == 0)
+    {
+        return 0; // Retorna ao menu
+    }
 
     strcat(cpf, ".txt"); // Adiciona extensão .txt
 
@@ -112,11 +148,12 @@ int main()
 
     for (laco = 1; laco == 1;) // Laço para repetir o menu
     {
-        printf("### Cartório da família LS!\n\n");
+        printf("### Lista de Evacuação do Brasil!\n\n");
         printf(" Escolha a opção desejada do menu: \n\n");
         printf("\t1 - Registrar nomes\n");
         printf("\t2 - Consultar nomes\n");
         printf("\t3 - Deletar nomes\n");
+        printf("\t4 - Visualizar todos os CPFs cadastrados\n");
         printf("\t0 - Sair\n");
 
         scanf("%d", &opcao);
@@ -134,6 +171,10 @@ int main()
 
         case 3:
             deletar();
+            break;
+
+        case 4:
+            visualizar_cpfs();
             break;
 
         case 0:
